@@ -1,5 +1,5 @@
 # API_Data Mining and Scrapping Process
-This is the process of automatically extracting data from websites. 
+This is the process of automatically extracting data from websites.I will build a data pipeline that scrapes data from a website, processes it, and stores in a database ready for analysis.
 ![1_tRlxeTqGyGX2yDve3v9Miw](https://github.com/Ackson507/API_Data-MiningScrapping_ETL_Script/assets/84422970/3c01c8c7-c208-4228-8f0b-0909ed880655)
 
 # Overview
