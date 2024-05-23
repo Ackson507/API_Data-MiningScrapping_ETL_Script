@@ -157,16 +157,18 @@ df= df.rename(columns=lambda x: x.lower())
 df.head()
 ```
 Below is the fully extracted and cleaned dataflame;
-![Dataflame_Python](https://github.com/Ackson507/API_Data-Mining_and_ETL_Scripting/assets/84422970/52eeefbb-244d-4578-af4e-7d05cbab3494)
+
 
 ### Task 4: Export to csv file
 ```python
 df.to_csv('SBT_Vehicles.csv', index=False)
 print("DataFrame saved as 'SBT_Vehicles'")
 ```
+![Screenshot (622)](https://github.com/Ackson507/API_Data-Mining_and_ETL_Scripting/assets/84422970/d7ff6581-9fdc-4265-b386-61df68cc856f)
 
 
-### Task 5: Upon doing Task 4< at the same time we open a connection to my default database Postgres and create a corresponding table awaiting for import of the csv file. Then lastly we excecute a python command to send the exported data and append to the already existing database table called sbt_vehicles
+### Task 5: Opening a connection to Postgres database.
+We create a corresponding table awaiting for import of the csv file. Then lastly we excecute a python command to send the exported data and append to the already existing database table called sbt_vehicles
 
 Firstly, we create a corresponding table in Postgres
 ```python
