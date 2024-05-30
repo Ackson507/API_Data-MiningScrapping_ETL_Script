@@ -1,10 +1,13 @@
-# API_Data Mining and Scrapping Process
-This is the process of automatically extracting data from websites.I will build a data pipeline that scrapes data from a website, processes it, and stores in a database ready for analysis.
+# Buiding a Data Pipeline 
+This project will build a data pipeline that will allow you us to automate our data pipeline for both CSV files and API scraping using Apache Airflow, running the entire process once weekly. We have three objectives we need to do to carry out this project successiful.
+- Objective 1: Web-scrapping: Web scraping is a technique used to automatically extract large amounts of data from websites. It involves fetching the web pages and extracting specific information from them, which can then be used for various purposes such as data analysis, market research, and content aggregation. Will use python alonside with webscrapping skills of using libraries such as Pandas or Pyspark, and Beautiful Soup.
+- Objective 2: File System: Will have a certain source of file in csv that will be recieving new data at certain period of time. We need to create a trasformation script that will automate data cleaning and trasformation process so that when new data comes in, the funtion in the script will be run through the file and carry out command instruction of cleaning and transforming.
+- Objective 3: Deploy Aworflow management tool such as Apche Airflow to automate our data pipeline, we will need to define Directed Acyclic Graphs (DAGs) in Python. Each DAG will correspond to one of our data sources: one for loading and transforming data from a CSV file which is objective 2 and another for scraping data from an API which is Objective 1. Each DAG will consist of four tasks: extracting data, transforming data, loading data, and a final task to notify or log the completion and sent the data collected to our destination database PostgresSQL .
+
 ![1_tRlxeTqGyGX2yDve3v9Miw](https://github.com/Ackson507/API_Data-MiningScrapping_ETL_Script/assets/84422970/3c01c8c7-c208-4228-8f0b-0909ed880655)
 
-# Overview
-API integration involves connecting to external systems or services via APIs to retrieve data. APIs (Application Programming Interfaces) provide a way for different software systems to communicate and share data in a structured format, often using HTTP requests and responses.APIs (Application Programming Interfaces) are owned and managed by the entities that develop and provide them. These entities can be companies, organizations, or individual developers who create APIs to allow other software applications to access their services, data, or functionalities. Some APIs require authentication using API keys, tokens, or OAuth but in this project will pick plublic and open source API.
-
+# Objective 1
+APIs (Application Programming Interfaces) are owned and managed by the entities that develop and provide them. These entities can be companies, organizations, or individual developers who create APIs to allow other software applications to access their services, data, or functionalities. Some APIs require authentication using API keys, tokens, or Authorization but in this project will pick public and open source API.
 ### Data Mining/Scraping:
 Web Scraping: This is the process of automatically extracting data from websites. This can include text, images, and other media types from various web pages. In this Project will scrap data from a one of the largets motor vehicle resale company SBT JAPAN. We will have multiple tasks objectives to complete this project as follows;
 - Task 1: Web scrapping to fetch data of vehicles available on there website and specifications and patial cleaning upon extracting
@@ -12,7 +15,6 @@ Web Scraping: This is the process of automatically extracting data from websites
 - Task 3: We will then do full data cleaning and transformation
 - Task 4: Export to csv file
 - Task 5: Upon doing Task 4< at the same time we open a connection to my default database postgres and create a corresponding table awaiting for import of the csv file. Then lastly we excecute a python command to send the exported data and append to the already existing database table called sbt_vehicles.
-- 
 ### Task 1: API Integration and fetching content
 APIs (Application Programming Interfaces): These are sets of rules and protocols that allow different software applications to communicate with each other. In this project, APIs are used to fetch data from various online sources. This could be data from social media platforms, financial data providers, weather services, or any other data sources that provide API access.
 ```python
@@ -102,11 +104,7 @@ df=pd.DataFrame({
 })
 
 ```
-
-
-
 ### Task 3: We will then do full data cleaning and transformation
-
 ```python
 #1 Changing data types: 'age' to float, 'salary' to int, 'join_date' to datetime
 df = df.astype({
@@ -238,6 +236,24 @@ df.to_sql('sbt_vehicles', engine, if_exists='append', index=False)
 print("Data has been successfully loaded into the database.")
 ```
 ![Database_Table](https://github.com/Ackson507/API_Data-Mining_and_ETL_Scripting/assets/84422970/a8ba8868-87fe-4221-9e6c-dc8b885b2840)
+
+### Objective 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 END.
