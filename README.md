@@ -205,169 +205,79 @@ The cleaned dataset name will be exported as "Sales_July_2019_cleaned.csv"
 ```
 ![csv file](https://github.com/Ackson507/ETL_Data_Pipeline_with_Python/assets/84422970/4d1b849f-b384-457b-8233-87c91d6645f0)
 
-# Objective 3
-To automate our data pipeline using Apache Airflow,will need to define Directed Acyclic Graphs (DAGs) in Python. Each DAG will correspond to one of your data sources: one for loading and transforming data from a CSV file and another for scraping data from an API. Each DAG will consist of four tasks: extracting data, transforming data, loading data, and a final task to notify or log the completion. Here will have two tasks. To not make this project longer will put some reference numbers of the code we need to insert into each DAG which is just same code as in objective One and Two.
+# Objective 3: Coding Directed Acyclic Graphs (DAGs) and Task dependecies
+To automate our data pipeline using Apache Airflow, we will need to define Directed Acyclic Graphs (DAGs) in Python. Each DAG will correspond to one of our data sources: One DAG for loading and transforming data from a CSV file, Follwed by another DAG for scraping data from an API and transforming it and lastly DAG for aggregation and exporting the files to a Postgress Database. Each DAG will consist of two or three tasks with well defined dependencies.
 Task 1: Coding a DAG for doing first objective 1
 Task 2: Coding a DAG for doing second objective 2
 Task 3: Coding a DAG for exporting both files to Postgres Database
 
+![1_M-yvjMW48kSoVpKOx6abmw](https://github.com/Ackson507/Data-pipeline-with-Airflow-Orchestration/assets/84422970/d3b25077-0aa2-4c5d-9efb-2ebb4066c4bf)
+
+
 Setting up Airflow enviroment on local windows machine.
 - Ensure you have Airflow installed and running.
-- We create a common directory so that the scripts are in accessible locations.
+- Create a user ID
+- We create a common directory so that the DAG scripts are in accessible locations by Airflow.
 - Set up Airflow variables and connections.
+- Startup th airflow webserver and scheduler to access the DAG and for monitoring workflow
 
-We open our code editor and begin writing DAGS.
-
-### Task 1: DAG 1
-Coding a DAG for doing first objective 1;
-- Combines extraction and transformation into a single task.
-- Loads the transformed data.
-
+### 
+We open our code editor and begin writing DAGS. After doing some study and research, I have compiled a DAG format with almost all default arguments that is needed and utilized comments to assist myself and a reader to understand the template and lines of code. I will post the full DAG format on another repository of DAGs that i am working on.
 ```python
+# Import necessary modules from Airflow
 from airflow import DAG
+from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
+from airflow.operators.dummy_operator import DummyOperator
 from airflow.utils.dates import days_ago
-import pandas as pd
 
+# Define the default arguments for the DAG
 default_args = {
-    'owner': 'airflow',
-    'start_date': days_ago(1),
-    'retries': 1,
+    'owner': 'airflow',  # Owner of the DAG
+    'depends_on_past': False,  # DAG run does not depend on past runs
+    'email_on_failure': False,  # Disable email on failure
+    'email_on_retry': False,  # Disable email on retry
+    'retries': 1,  # Number of retries on failure
 }
 
-def extract_and_transform_csv(): # task 1 in this DAG to begin cleaning and trasformation
-    #1 Your logic to extract and transform CSV data
-    df = pd.read_csv('Path')
-    #2 Perform transformations and save
-    df.to_pickle('path.pkl')  # Saving the transformed data
+# Instantiate the DAG
+dag = DAG(
+    'example_dag',  # Name of the DAG
+    default_args=default_args,  # Default arguments
+    description='A simple example DAG',  # Description of the DAG
+    schedule_interval='@daily',  # Schedule interval (e.g., daily)
+    start_date=days_ago(1),  # Start date for the DAG
+    catchup=False,  # Whether to perform a catchup run
+)
 
-def load_csv_data(): # task 2 in this DAG to save the file
-    df = pd.read_pickle(Path.pkl')
-    df.to_csv('/path/to/your/final_csv_output.csv')  # Saving the final output
+# Define the first task using BashOperator
+task1 = BashOperator(
+    task_id='print_date',  # Task ID
+    bash_command='date',  # Bash command to be executed
+    dag=dag,  # Reference to the DAG
+)
 
-# Then we use airflow funtion to create an execution of two tasks above with each task with unique ID
-with DAG(
-    'csv_data_pipeline',
-    default_args=default_args,
-    description='A DAG for CSV data extraction, transformation, and loading',
-    schedule_interval='@weekly',
-    catchup=False,
-) as dag:
+# Define a simple Python function to be used in a PythonOperator
+def my_python_function(**kwargs):
+    print("Hello from Python!")
 
-    extract_transform_task = PythonOperator(
-        task_id='extract_and_transform_csv',
-        python_callable=extract_and_transform_csv,
-    )
+# Define the second task using PythonOperator
+task2 = PythonOperator(
+    task_id='run_python_function',  # Task ID
+    python_callable=my_python_function,  # Python function to be executed
+    provide_context=True,  # Provide Airflow context to the Python function
+    dag=dag,  # Reference to the DAG
+)
 
-    load_task = PythonOperator(
-        task_id='load_csv_data',
-        python_callable=load_csv_data,
-    )
+# Define the third task using DummyOperator
+task3 = DummyOperator(
+    task_id='dummy_task',  # Task ID
+    dag=dag,  # Reference to the DAG
+)
 
-    extract_transform_task >> load_task #This is a dependancy code which states which task in the DAG come first and last in that order
-
-```
-
-### Task 1: DAG 2
-Coding a DAG for doing second objective 2;
-
-- Combines scraping and transformation into a single task.
-- Loads the transformed data
-
-```python
-
-# Libraries first
-from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
-from airflow.utils.dates import days_ago
-import requests
-import json
-
-default_args = {
-    'owner': 'airflow',
-    'start_date': days_ago(1),
-    'retries': 1,
-}
-
-def extract_and_transform_api_data():
-    # Our logic to scrape data from API and transform it.
-
-def load_api_data():
-    # Loadind into dataflame for cleaning and trasformation
-
-with DAG(
-    'api_data_pipeline',
-    default_args=default_args,
-    description='A DAG for API data extraction, transformation, and loading',
-    schedule_interval='@weekly',
-    catchup=False,
-) as dag:
-
-    extract_transform_task = PythonOperator(
-        task_id='extract_and_transform_api_data',
-        python_callable=extract_and_transform_api_data,
-    )
-
-    load_task = PythonOperator(
-        task_id='load_api_data',
-        python_callable=load_api_data,
-    )
-
-    extract_transform_task >> load_task #This is a dependancy code which states which task in the DAG come first and last in that order
-
-```
-
-
-### Task 1: DAG 3
-Coding a DAG for exporting both files to Postgres Database
-- Loads the output files from the previous DAGs into a Postgres database.
-- Uses PostgresHook to interact with the database and insert rows.
-
-```python
-
-# Libraries
-from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
-from airflow.utils.dates import days_ago
-from airflow.hooks.postgres_hook import PostgresHook
-import pandas as pd
-import json
-
-default_args = {
-    'owner': 'airflow',
-    'start_date': days_ago(1),
-    'retries': 1,
-}
-
-def load_to_postgres(): # Main task of sending both files to Postgres database
-    #1 Load CSV data
-    
-    #2 Load API data
-    with open('/path/to/your/final_api_output.json', 'r') as f:
-        api_data = json.load(f)
-
-    #3 Insert CSV data into Postgres
-    pg_hook = PostgresHook(postgres_conn_id='your_postgres_conn_id')
-    pg_hook.insert_rows(table='your_csv_table', rows=csv_data.values.tolist(), target_fields=csv_data.columns.tolist())
-
-    # 4Insert API data into Postgres
-    api_df = pd.DataFrame(api_data)
-    pg_hook.insert_rows(table='your_api_table', rows=api_df.values.tolist(), target_fields=api_df.columns.tolist())
-
-with DAG(
-    'load_to_postgres',
-    default_args=default_args,
-    description='A DAG for loading transformed data into Postgres',
-    schedule_interval='@weekly',
-    catchup=False,
-) as dag:
-
-    load_task = PythonOperator(
-        task_id='load_to_postgres',
-        python_callable=load_to_postgres,
-    )
-
-    load_task #This is a last code which states which task in the DAG come first and last in that order
+# Set up the task dependencies
+task1 >> task2 >> task3
+# This specifies that task1 must run before task2 and task2 must run before task3
 
 ```
 
